@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
@@ -8,9 +9,13 @@ public class PlayerController : MonoBehaviour
 
     public GameObject GameWonCanvas;
 
+    public GameObject GameLostCanvas;
+
     public GameObject GamePauseCanvas;
 
     private bool isGameWon = false;
+
+    private bool isGameLost = false;
 
     private bool isGamePaused = false;
 
@@ -24,18 +29,20 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (isGameWon || isGamePaused)
+        if (isGameWon || isGamePaused || isGameLost)
         {
-            RigidBody2D.velocity = new Vector2(0f, 0f);
+
             return;
         }
         if (Input.GetAxis("Cancel") > 0)
         {
-            RigidBody2D.velocity = new Vector2(0f, 0f);
-            GamePauseCanvas.SetActive(true);
-            isGamePaused = true;
+            //RigidBody2D.velocity = new Vector2(0f, 0f);
+            //Debug.Log("toggle pause pressed Escape");
+
+            TogglePauseMenu(true);
             return;
         }
+       
         if (Input.GetAxis("Jump") > 0)
         {
             RigidBody2D.velocity = new Vector2(0f, 0f);
@@ -60,18 +67,49 @@ public class PlayerController : MonoBehaviour
         {
             RigidBody2D.velocity = new Vector2(0f, 0f);
         }
-        
+
     }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.tag == "Door")
         {
-            Debug.Log("Level Coimplete");
+            //Debug.Log("Level Coimplete");
             GameWonCanvas.SetActive(true);
             isGameWon = true;
+            RigidBody2D.velocity = new Vector2(0f, 0f);
+        }
+        else if (other.tag == "Enemy" || other.tag == "Obstacles")
+        {
+            GameLostCanvas.SetActive(true);
+            isGameLost = true;
+            RigidBody2D.velocity = new Vector2(0f, 0f);
+        }
+    }
+
+    public void GameRestart()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        GameWonCanvas.SetActive(false);
+        isGameWon = false;
+        isGameLost = false;
+    }
+
+    public void TogglePauseMenu(bool isPaused)
+    {
+        //Debug.Log("Level Pause"+isPaused);
+        isGamePaused = isPaused;
+        GamePauseCanvas.SetActive(isPaused);
+        if (isPaused)
+        {
+            Time.timeScale = 0f;
+        }
+        else
+        {
+            Time.timeScale = 1;
+            Input.ResetInputAxes();
         }
 
-
+        //isGamePaused = true;
     }
 }
