@@ -77,9 +77,21 @@ public class PlayerController : MonoBehaviour
         if (other.tag == "Door")
         {
             //Debug.Log("Level Coimplete");
-            GameWonCanvas.SetActive(true);
-            isGameWon = true;
-            RigidBody2D.velocity = new Vector2(0f, 0f);
+            int NextLevel = SceneManager.GetActiveScene().buildIndex + 1;
+            Debug.Log(NextLevel);
+            if (NextLevel < 6)
+            {
+                GameWonCanvas.SetActive(true);
+                isGameWon = true;
+                RigidBody2D.velocity = new Vector2(0f, 0f);
+            }
+            else
+            {
+                GameOverCanvas.SetActive(true);
+                isGameWon = true;
+                RigidBody2D.velocity = new Vector2(0f, 0f);
+            }
+
         }
         else if (other.tag == "Enemy" || other.tag == "Obstacles")
         {
@@ -102,10 +114,12 @@ public class PlayerController : MonoBehaviour
         //isGameWon = false;
         isGameLost = false;
     }
+    
     public void GameWon()
     {
         int NextLevel = SceneManager.GetActiveScene().buildIndex + 1;
-        if (NextLevel < 5)
+        Debug.Log(NextLevel);
+        if (NextLevel < 6)
         {
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
             GameWonCanvas.SetActive(false);
@@ -113,7 +127,7 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
-            GameOverCanvas.SetActive(false);
+            GameOverCanvas.SetActive(true);
         }
 
         //isGameLost = false;
@@ -121,7 +135,7 @@ public class PlayerController : MonoBehaviour
 
     public void GameOver()
     {
-
+        Application.Quit();
     }
 
     public void TogglePauseMenu(bool isPaused)
