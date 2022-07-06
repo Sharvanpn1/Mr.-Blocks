@@ -9,6 +9,8 @@ public class PlayerController : MonoBehaviour
 
     public GameObject GameWonCanvas;
 
+    public GameObject GameOverCanvas;
+
     public GameObject GameLostCanvas;
 
     public GameObject GamePauseCanvas;
@@ -86,13 +88,40 @@ public class PlayerController : MonoBehaviour
             RigidBody2D.velocity = new Vector2(0f, 0f);
         }
     }
-
+    public void GameStart()
+    {
+        SceneManager.LoadScene(1);
+        //GameLostCanvas.SetActive(false);
+        isGameWon = false;
+        isGameLost = false;
+    }
     public void GameRestart()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-        GameWonCanvas.SetActive(false);
-        isGameWon = false;
+        GameLostCanvas.SetActive(false);
+        //isGameWon = false;
         isGameLost = false;
+    }
+    public void GameWon()
+    {
+        int NextLevel = SceneManager.GetActiveScene().buildIndex + 1;
+        if (NextLevel < 5)
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+            GameWonCanvas.SetActive(false);
+            isGameWon = false;
+        }
+        else
+        {
+            GameOverCanvas.SetActive(false);
+        }
+
+        //isGameLost = false;
+    }
+
+    public void GameOver()
+    {
+
     }
 
     public void TogglePauseMenu(bool isPaused)
